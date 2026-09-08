@@ -1,15 +1,22 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { Icon, type IconName } from "@/components/icons";
 
-const navigation: { label: string; icon: IconName; active?: boolean }[] = [
-  { label: "Dashboard", icon: "dashboard", active: true },
-  { label: "Staff Actions", icon: "staff" },
-  { label: "Reports & Appeals", icon: "reports" },
-  { label: "Events", icon: "events" },
-  { label: "Server Status", icon: "server" },
-  { label: "Settings", icon: "settings" },
+const navigation: { label: string; icon: IconName; href: string }[] = [
+  { label: "Dashboard", icon: "dashboard", href: "/" },
+  { label: "Staff Actions", icon: "staff", href: "/staff-actions" },
+  { label: "Reports & Appeals", icon: "reports", href: "#" },
+  { label: "Events", icon: "events", href: "#" },
+  { label: "Server Status", icon: "server", href: "#" },
+  { label: "Settings", icon: "settings", href: "#" },
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="hidden min-h-screen w-64 shrink-0 border-r border-white/[0.06] bg-[#0b0e14]/90 px-4 py-6 lg:flex lg:flex-col">
       <div className="flex items-center gap-3 px-3">
@@ -24,22 +31,26 @@ export function Sidebar() {
       </div>
 
       <nav className="mt-10 space-y-1" aria-label="Primary navigation">
-        {navigation.map((item) => (
-          <a
-            key={item.label}
-            href="#"
-            aria-current={item.active ? "page" : undefined}
-            className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              item.active
-                ? "bg-indigo-500/10 text-indigo-300"
-                : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-200"
-            }`}
-          >
-            <Icon name={item.icon} className="size-[18px]" />
-            {item.label}
-            {item.active && <span className="ml-auto size-1.5 rounded-full bg-indigo-400" />}
-          </a>
-        ))}
+        {navigation.map((item) => {
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+
+          return (
+            <Link
+              key={item.href === "#" ? item.label : item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-indigo-500/10 text-indigo-300"
+                  : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-200"
+              }`}
+            >
+              <Icon name={item.icon} className="size-[18px]" />
+              {item.label}
+              {isActive && <span className="ml-auto size-1.5 rounded-full bg-indigo-400" />}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="mt-auto rounded-xl border border-white/[0.07] bg-white/[0.025] p-3">
@@ -55,4 +66,3 @@ export function Sidebar() {
     </aside>
   );
 }
-
